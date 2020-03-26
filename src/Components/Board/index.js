@@ -5,7 +5,7 @@ import './style.css';
 export class Board extends Component {
     renderSquare(n)
     {
-        return <Square onClick = {() => this.props.onClick(n)}></Square>
+        return <Square Square value={this.props.squares[n]} onClick = {() => this.props.onClick(n)}></Square>
     }
     render() {
         return (

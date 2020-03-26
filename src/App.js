@@ -1,14 +1,11 @@
 import React from 'react';
-import Board from './Components/Board';
+import Game from './Components/Game';
+
 function App() {
   return (
-    <div className="game">
-    <div className = "game-board">
-    <Board 
-    onClick = {(n) => this.onClick(n)}
-    ></Board>
-    </div>
-    </div>
+    <React.Fragment>
+      <Game/>
+    </React.Fragment>
   );
 }
 
