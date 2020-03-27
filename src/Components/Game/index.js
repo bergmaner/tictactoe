@@ -18,6 +18,13 @@ class Game extends Component {
         }
     }
 
+    checkBoard = (squares) =>
+    {
+        if(squares[0] && squares[1]  && squares[2] 
+        && squares[3]  && squares[4] && squares[5]
+        && squares[6] && squares[7]  && squares[8])return true;
+        else return false;
+    }
     checkWinner = (squares) =>
     {
         const possibilities =
@@ -50,6 +57,7 @@ class Game extends Component {
         const current = history[history.length - 1];
         const squares = current.squares.slice();
         const winner = this.checkWinner(squares);
+
        if(winner || squares[n]) return ;
         squares[n] = this.state.xIsNext ? 'X' : 'O';
         this.setState({
@@ -68,16 +76,24 @@ class Game extends Component {
         const current = history[this.state.stepNumber];
         const squares = current.squares.slice();
         const winner = this.checkWinner(squares);
+        const draw = this.checkBoard(squares);
         let status;
+
+        
+
          if(winner) 
          {
              status = `Winner is ${winner}` 
         }  
+
         else
         {
             status = `Next player is ${this.state.xIsNext ? 'X' : 'O'}`;
         } 
-  
+        if (draw)
+        {
+            status = `Nobody win` 
+        }
          return (
     <div className="game">
     <div className = "game-board">
