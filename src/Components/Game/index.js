@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import Board from '../Board';
-
+import './style.css';
 class Game extends Component {
 
     constructor(props)
@@ -8,6 +8,7 @@ class Game extends Component {
         super(props);
         this.state = 
         {
+            
             xIsNext : true,
             stepNumber:0,
             history:
@@ -40,6 +41,10 @@ class Game extends Component {
         return null;
 
     }
+    restart = () => {
+        console.log("hehe");
+        this.setState({stepNumber : 0})
+    }
     onClick = (n) => {
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
@@ -64,17 +69,27 @@ class Game extends Component {
         const squares = current.squares.slice();
         const winner = this.checkWinner(squares);
         let status;
-         (winner) ? status = `Winner is ${winner}`  : status = `Winner is ` + this.state.xIsNext ? 'X' : 'O';
+         if(winner) 
+         {
+             status = `Winner is ${winner}` 
+        }  
+        else
+        {
+            status = `Next player is ${this.state.xIsNext ? 'X' : 'O'}`;
+        } 
   
          return (
     <div className="game">
     <div className = "game-board">
     <Board 
     squares={current.squares}
+    clicked = {this.props.clicked}
     onClick = {(n) => this.onClick(n)}
     ></Board>
-    <div>{status}</div>
+    <div className = "status">{status}</div>
+    <button className="restart" onClick = {() => this.restart()}>Restart</button>
     </div>
+    
     </div>
   );         
 }
