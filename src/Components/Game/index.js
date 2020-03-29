@@ -42,7 +42,7 @@ class Game extends Component {
             [0,4,8],
             [2,4,6]
         ]
-        const symbol = this.state.xIsNext ? 'O' : 'X';
+        const symbol =this.state.xIsNext ? 'O' : 'X';
         const choice = Math.floor(Math.random() * 9);
         if(!this.checkWinner(squares))
         {
@@ -62,7 +62,38 @@ class Game extends Component {
                     this.doMove(squares,'easy');
                 }
             break;
-            case 'medium':break;
+            case 'medium':
+                for(let i=0 ; i < possibilities.length ; i++)
+        {
+            const [x,y,z] = possibilities[i];
+            if((!squares[x] && squares[y]===symbol && squares[z] === symbol)) 
+            {
+                squares[x] = symbol;
+                return;
+            }
+            else if(squares[x] === symbol && !squares[y] && squares[z] === symbol) 
+            {
+                squares[y] = symbol;
+                return ;
+            }
+            else if(squares[x] === symbol && squares[y] === symbol && !squares[z]) 
+            {
+                squares[z] = symbol;
+                return;
+            }
+            
+        }
+         if(!squares[choice])
+        {
+        
+            squares[choice] = symbol;
+            return choice;
+        } 
+        else
+        {
+            this.doMove(squares,'medium');
+        }
+            break;
             case 'hard':break;
             case 'vs player':
                 this.setState({xIsNext:!this.state.xIsNext})
