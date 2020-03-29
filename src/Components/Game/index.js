@@ -11,6 +11,7 @@ class Game extends Component {
             
             xIsNext : true,
             stepNumber:0,
+            level:'vs player',
             history:
             [
                 { squares: Array(9).fill(null) }
@@ -18,12 +19,56 @@ class Game extends Component {
         }
     }
 
-    checkBoard = (squares) =>
+    checkBoard = (squares ) =>
     {
         if(squares[0] && squares[1]  && squares[2] 
         && squares[3]  && squares[4] && squares[5]
         && squares[6] && squares[7]  && squares[8])return true;
         else return false;
+    }
+    doMove = (squares,level) =>
+    {
+       
+       
+        
+        const possibilities =
+        [
+            [0,1,2],
+            [3,4,5],
+            [6,7,8],
+            [0,3,6],
+            [1,4,7],
+            [2,5,8],
+            [0,4,8],
+            [2,4,6]
+        ]
+        const symbol = this.state.xIsNext ? 'O' : 'X';
+        const choice = Math.floor(Math.random() * 9);
+        if(!this.checkWinner(squares))
+        {
+        switch (level)
+        {
+            case 'easy':
+                
+                console.log(choice);
+                if(!squares[choice])
+                {
+                
+                    squares[choice] = symbol;
+                    return choice;
+                } 
+                else
+                {
+                    this.doMove(squares,'easy');
+                }
+            break;
+            case 'medium':break;
+            case 'hard':break;
+            case 'vs player':
+                this.setState({xIsNext:!this.state.xIsNext})
+                break;
+        }
+    }
     }
     checkWinner = (squares) =>
     {
@@ -57,19 +102,35 @@ class Game extends Component {
         const current = history[history.length - 1];
         const squares = current.squares.slice();
         const winner = this.checkWinner(squares);
-
-       if(winner || squares[n]) return ;
+        const level = this.state.level;
+       if(winner || squares[n]) return; 
+       
         squares[n] = this.state.xIsNext ? 'X' : 'O';
         this.setState({
             history: history.concat({
                 squares: squares
             }),
-            xIsNext: !this.state.xIsNext,
             stepNumber: history.length
         });
-        console.log(n)
+        this.doMove(squares,level);
+        this.setState({
+            history: history.concat({
+                squares: squares
+            }),
+            stepNumber: history.length
+        });
+       
+        
+        
+        
     }
-
+    selectLevel = () =>
+    {
+        this.restart();
+        const levels = document.querySelector('select');
+        const level =levels.options[levels.selectedIndex].value
+        this.setState({level : level})
+    }
     render()
     {
         const history = this.state.history;
@@ -79,6 +140,7 @@ class Game extends Component {
         const draw = this.checkBoard(squares);
         let status;
 
+      
         
 
          if(winner) 
@@ -96,15 +158,26 @@ class Game extends Component {
         }
          return (
     <div className="game">
-    <div className = "game-board">
+    <div className ="info">
+    <div className = "status">{status}</div>
+    <div className="options">
+    <select onChange = {(e) => this.selectLevel()}>
+		<option>vs player</option>
+		<option>easy</option>
+        <option>medium</option>
+        <option>hard</option>
+	</select>
+    </div>
+    </div>
+   
     <Board 
     squares={current.squares}
     clicked = {this.props.clicked}
     onClick = {(n) => this.onClick(n)}
     ></Board>
-    <div className = "status">{status}</div>
+    
     <button className="restart" onClick = {() => this.restart()}>Restart</button>
-    </div>
+   
     
     </div>
   );         
