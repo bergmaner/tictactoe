@@ -23,9 +23,20 @@ class Game extends Component {
     {
         if(squares[0] && squares[1]  && squares[2] 
         && squares[3]  && squares[4] && squares[5]
-        && squares[6] && squares[7]  && squares[8])return true;
+        && squares[6] && squares[7]  && squares[8] && !this.checkWinner(squares))return true;
         else return false;
     }
+    avaibleMoves = (squares) =>
+    {
+        const arr= [];
+        for(let i=0; i<9; i++)
+        {
+           if(squares[i] !== 'X' && squares[i] !== 'O')arr.push(i);
+        }
+        
+       return arr;
+    }
+    
     doMove = (squares,level) =>
     {
        
@@ -43,7 +54,8 @@ class Game extends Component {
             [2,4,6]
         ]
         const symbol =this.state.xIsNext ? 'O' : 'X';
-        const choice = Math.floor(Math.random() * 9);
+        const avaibleMoves = this.avaibleMoves(squares);
+        const choice = Math.floor(Math.random() * avaibleMoves.length);
         if(!this.checkWinner(squares))
         {
         switch (level)
@@ -51,50 +63,66 @@ class Game extends Component {
             case 'easy':
                 
                 console.log(choice);
-                if(!squares[choice])
-                {
+               
                 
-                    squares[choice] = symbol;
+                    squares[avaibleMoves[choice]] = symbol;
                     return choice;
-                } 
-                else
-                {
-                    this.doMove(squares,'easy');
-                }
+                
+               
             break;
             case 'medium':
                 for(let i=0 ; i < possibilities.length ; i++)
-        {
-            const [x,y,z] = possibilities[i];
-            if((!squares[x] && squares[y]===symbol && squares[z] === symbol)) 
-            {
-                squares[x] = symbol;
-                return;
-            }
-            else if(squares[x] === symbol && !squares[y] && squares[z] === symbol) 
-            {
-                squares[y] = symbol;
-                return ;
-            }
-            else if(squares[x] === symbol && squares[y] === symbol && !squares[z]) 
-            {
-                squares[z] = symbol;
-                return;
-            }
-            
-        }
-         if(!squares[choice])
-        {
+                {
+                    const [x,y,z] = possibilities[i];
+                    if((!squares[x] && squares[y]===symbol && squares[z] === symbol)) 
+                    {
+                        squares[x] = symbol;
+                        return;
+                    }
+                    else if(squares[x] === symbol && !squares[y] && squares[z] === symbol) 
+                    {
+                        squares[y] = symbol;
+                        return ;
+                    }
+                    else if(squares[x] === symbol && squares[y] === symbol && !squares[z]) 
+                    {
+                        squares[z] = symbol;
+                        return;
+                    }
+                    
+                }
+                    squares[avaibleMoves[choice]] = symbol;
+                    return choice;
         
-            squares[choice] = symbol;
-            return choice;
-        } 
-        else
-        {
-            this.doMove(squares,'medium');
-        }
             break;
-            case 'hard':break;
+            case 'hard':
+                for(let i=0 ; i < possibilities.length ; i++)
+                {
+                    const [x,y,z] = possibilities[i];
+                    if((!squares[x] && squares[y] === squares[z]) && squares[z]) 
+                    {
+                        
+                        squares[x] = symbol;
+                        return;
+                    }
+                    else if(squares[x] === squares[z] && !squares[y] && squares[z] ) 
+                    {
+                    
+                        squares[y] = symbol;
+                        return ;
+                    }
+                    else if(squares[x] === squares[y] && !squares[z] && squares[y]) 
+                    {
+                        
+                        squares[z] = symbol;
+                        return;
+                    }
+                    
+                }
+                    squares[avaibleMoves[choice]] = symbol;
+                    return choice;
+               
+            break;
             case 'vs player':
                 this.setState({xIsNext:!this.state.xIsNext})
                 break;
@@ -134,6 +162,7 @@ class Game extends Component {
         const squares = current.squares.slice();
         const winner = this.checkWinner(squares);
         const level = this.state.level;
+       
        if(winner || squares[n]) return; 
        
         squares[n] = this.state.xIsNext ? 'X' : 'O';
@@ -143,6 +172,7 @@ class Game extends Component {
             }),
             stepNumber: history.length
         });
+        console.log(this.avaibleMoves(squares));
         this.doMove(squares,level);
         this.setState({
             history: history.concat({
